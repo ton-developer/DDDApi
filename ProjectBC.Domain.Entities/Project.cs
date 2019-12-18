@@ -10,6 +10,5 @@ namespace ProjectBC.Domain.Entities
         public string Description { get; set; }
         public ICollection<Pbi> Backlog { get; set; }
         public ICollection<Sprint> Sprints { get; set; }
-
     }
 }
