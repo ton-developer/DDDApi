@@ -4,10 +4,10 @@ using System.Text;
 
 namespace ProjectBC.Domain.Entities
 {
-    public class Sprint
+    public class Team
     {
         public int Id { get; set; }
-        public int Number { get; set; }
-
+        public string Name { get; set; }
+        public ICollection<User> Members { get; set; }
     }
 }
