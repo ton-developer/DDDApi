@@ -46,6 +46,9 @@ namespace ProjectsBC.Api
 
             app.UseRouting();
 
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
