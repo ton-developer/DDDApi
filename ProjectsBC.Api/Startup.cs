@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using ProjectBC.Infrastructure;
 
 namespace ProjectsBC.Api
@@ -31,6 +32,16 @@ namespace ProjectsBC.Api
             {
                 opt.UseSqlServer(Configuration.GetConnectionString("ProjectsDatabase"), b => b.MigrationsAssembly("ProjectBC.Api"));
             });
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo()
+                {
+                    Title = "ProjectsBC APi V1",
+                    Version = "v1",
+                    Description = "Blash blash blash"
+                });
+            });
             services.AddControllers();
         }
 
@@ -47,7 +58,11 @@ namespace ProjectsBC.Api
             app.UseRouting();
 
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint($"/swagger/v1/swagger.json", "ProjectsBC APi V1");
+            });
+            
 
             app.UseAuthorization();
 
