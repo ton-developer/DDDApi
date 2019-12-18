@@ -14,6 +14,8 @@ namespace ProjectBC.Domain.Entities
             get => (EndDate - StartDate).Days;
         }
 
+        private DateRange() { }
+
         public DateRange(DateTime startDate, DateTime endDate)
         {
             if (endDate <= startDate)
