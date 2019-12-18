@@ -1,10 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.0</TargetFramework>
+        <AssemblyName>ProjectBC.Api</AssemblyName>
+        <RootNamespace>ProjectBC.Api</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ProjectBC.Domain.Entities\ProjectBC.Domain.Entities.csproj" />
     </ItemGroup>
 
 </Project>
