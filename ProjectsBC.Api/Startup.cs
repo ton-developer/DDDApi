@@ -6,10 +6,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+using ProjectBC.Infrastructure;
 
 namespace ProjectsBC.Api
 {
@@ -25,6 +28,20 @@ namespace ProjectsBC.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ProjectsDbContext>(opt =>
+            {
+                opt.UseSqlServer(Configuration.GetConnectionString("ProjectsDatabase"), b => b.MigrationsAssembly("ProjectBC.Api"));
+            });
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo()
+                {
+                    Title = "ProjectsBC APi V1",
+                    Version = "v1",
+                    Description = "Blash blash blash"
+                });
+            });
             services.AddControllers();
         }
 
@@ -39,6 +56,13 @@ namespace ProjectsBC.Api
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint($"/swagger/v1/swagger.json", "ProjectsBC APi V1");
+            });
+            
 
             app.UseAuthorization();
 
