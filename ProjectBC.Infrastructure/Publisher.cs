@@ -17,13 +17,9 @@ namespace ProjectBC.Infrastructure
         
         public async Task Publish(IDomainCommand domainCommand)
         {
-            var commandHandlers = _serviceProvider.GetServices<IDomainCommandHandler>();
-            var compatibleHandlers = commandHandlers.Where(x => x.CanHandle(domainCommand.GetType()));
-
-            foreach (var domainCommandHandler in compatibleHandlers)
-            {
-                await domainCommandHandler.Handle(domainCommand);
-            }
+            await _serviceProvider.GetServices<IDomainCommandHandler>()
+                .FirstOrDefault(x => x.CanHandle(domainCommand.GetType()))
+                .HandleAsync(domainCommand);
         }
     }
 }

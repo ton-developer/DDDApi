@@ -12,9 +12,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using ProjectBC.Api.Queries;
 using ProjectBC.Domain;
 using ProjectBC.Domain.Commands;
 using ProjectBC.Infrastructure;
+using ProjectsBC.Api.Queries;
 
 namespace ProjectsBC.Api
 {
@@ -41,6 +43,8 @@ namespace ProjectsBC.Api
             
             services.AddTransient<IPublisher, Publisher>();
             services.AddTransient<IDomainCommandHandler, AddSprintToProjectCommandHandler>();
+            services.AddTransient<IProjectQueries, ProjectQueries>();
+            
             
             // Configure Swagger to show the API info in the end point /swagger
             services.AddSwaggerGen(options =>

@@ -11,11 +11,12 @@ namespace ProjectBC.Domain.Commands
         {
             _projectRepository = projectRepository;
         }
-        public async Task Handle(IDomainCommand command)
+        public async Task HandleAsync(IDomainCommand command)
         {
             var cmd = command as AddSprintToProjectCommand;
             var pr = await _projectRepository.GetByIdAsync(cmd.ProjectId);
             pr.AddSprint(cmd.Sprint);
+            await _projectRepository.UnitOfWork.CommitAsync();
         }
 
         public bool CanHandle(Type commandType) => commandType == this.GetType();
