@@ -15,6 +15,8 @@ namespace ProjectBC.Domain.Entities.Tests
             var project = new Project();
             project.AddSprint(new Sprint{ DateRange = new DateRange(new DateTime(2019, 12, 18), new DateTime(2019, 12, 30))});
             
+            Assert.Equal(true, false);
+            
             FluentActions.Invoking(() => 
                 project.AddSprint(new Sprint {DateRange = new DateRange(new DateTime(2018, 12, 12), new DateTime(2020, 12, 12) )})).
                 Should().Throw<DomainException>();
