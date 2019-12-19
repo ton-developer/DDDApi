@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ProjectBC.Domain;
+using ProjectBC.Domain.Commands;
 using ProjectBC.Infrastructure;
 
 namespace ProjectsBC.Api
@@ -37,6 +38,9 @@ namespace ProjectsBC.Api
 
             // Register the dependencies with the Infrastructure
             services.AddTransient<IProjectRepository, ProjectRepository>();
+            
+            services.AddTransient<IPublisher, Publisher>();
+            services.AddTransient<IDomainCommandHandler, AddSprintToProjectCommandHandler>();
             
             // Configure Swagger to show the API info in the end point /swagger
             services.AddSwaggerGen(options =>

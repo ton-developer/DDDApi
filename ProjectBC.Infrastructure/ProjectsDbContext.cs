@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using ProjectBC.Domain;
 using ProjectBC.Domain.Entities;
+using Task = ProjectBC.Domain.Entities.Task;
 
 namespace ProjectBC.Infrastructure
 {
-    public class ProjectsDbContext : DbContext
+    public class ProjectsDbContext : DbContext, IUnitOfWork
     {
         public DbSet<Project> Projects { get; set; }
         public DbSet<Team> Teams { get; set; }
@@ -20,6 +23,11 @@ namespace ProjectBC.Infrastructure
         {
             modelBuilder.Entity<Sprint>()
                 .OwnsOne<DateRange>(s => s.DateRange);
+        }
+
+        public async System.Threading.Tasks.Task CommitAsync()
+        {
+            await SaveChangesAsync();
         }
     }
 }

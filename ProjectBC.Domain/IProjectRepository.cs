@@ -5,6 +5,7 @@ namespace ProjectBC.Domain
 {
     public interface IProjectRepository
     {
+        IUnitOfWork UnitOfWork { get; }
         Task<Project> GetByIdAsync(int id);
     }
 }

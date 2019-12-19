@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectBC.Domain;
+using ProjectBC.Domain.Commands;
 using ProjectBC.Domain.Entities;
 using ProjectBC.Infrastructure;
 using ProjectsBC.Api.Dtos;
@@ -13,13 +14,13 @@ namespace ProjectsBC.Api.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private readonly ProjectsDbContext _db;
         private readonly IProjectRepository _projectRepository;
+        private readonly IPublisher _publisher;
 
-        public ProjectsController(ProjectsDbContext db, IProjectRepository projectRepository)
+        public ProjectsController(IProjectRepository projectRepository, IPublisher publisher)
         {
-            _db = db;
             _projectRepository = projectRepository;
+            _publisher = publisher;
         }
         [HttpPost]
         [Route("{projectId}/sprints")]
@@ -30,15 +31,9 @@ namespace ProjectsBC.Api.Controllers
                 DateRange = new DateRange(sprint.Start, sprint.Start.AddDays(sprint.Days))
             };
 
-            var project = await _projectRepository.GetByIdAsync(projectId);
-            if (project == null)
-            {
-                return NotFound();
-            }
-            
-            project.AddSprint(sprintToAdd);
-
-            await _db.SaveChangesAsync();
+            var command = new AddSprintToProjectCommand(projectId, sprintToAdd);
+            await _publisher.Publish(command);
+            await _projectRepository.UnitOfWork.CommitAsync();
             
             return Ok();
         }

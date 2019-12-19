@@ -14,6 +14,9 @@ namespace ProjectBC.Infrastructure
         {
             _ctx = ctx;
         }
+
+        public IUnitOfWork UnitOfWork => _ctx;
+
         public async Task<Project> GetByIdAsync(int id)
         {
             return await _ctx.Projects
