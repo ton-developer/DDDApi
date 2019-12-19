@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProjectBC.Domain;
 using ProjectBC.Domain.Entities;
 using ProjectBC.Infrastructure;
 using ProjectsBC.Api.Dtos;
@@ -13,10 +14,12 @@ namespace ProjectsBC.Api.Controllers
     public class ProjectsController : ControllerBase
     {
         private readonly ProjectsDbContext _db;
+        private readonly IProjectRepository _projectRepository;
 
-        public ProjectsController(ProjectsDbContext db)
+        public ProjectsController(ProjectsDbContext db, IProjectRepository projectRepository)
         {
             _db = db;
+            _projectRepository = projectRepository;
         }
         [HttpPost]
         [Route("{projectId}/sprints")]
@@ -27,8 +30,7 @@ namespace ProjectsBC.Api.Controllers
                 DateRange = new DateRange(sprint.Start, sprint.Start.AddDays(sprint.Days))
             };
 
-            var project = _db.Projects.Include(p => p.Sprints).
-                FirstOrDefault(x => x.Id == projectId);
+            var project = await _projectRepository.GetByIdAsync(projectId);
             if (project == null)
             {
                 return NotFound();
