@@ -2,9 +2,13 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProjectBC.Api.Queries;
+using ProjectBC.Domain;
+using ProjectBC.Domain.Commands;
 using ProjectBC.Domain.Entities;
 using ProjectBC.Infrastructure;
 using ProjectsBC.Api.Dtos;
+using ProjectsBC.Api.Queries;
 
 namespace ProjectsBC.Api.Controllers
 {
@@ -12,11 +16,13 @@ namespace ProjectsBC.Api.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private readonly ProjectsDbContext _db;
+        private readonly IPublisher _publisher;
+        private readonly IProjectQueries _projectQueries;
 
-        public ProjectsController(ProjectsDbContext db)
+        public ProjectsController(IPublisher publisher, IProjectQueries projectQueries)
         {
-            _db = db;
+            _publisher = publisher;
+            _projectQueries = projectQueries;
         }
         [HttpPost]
         [Route("{projectId}/sprints")]
@@ -27,18 +33,15 @@ namespace ProjectsBC.Api.Controllers
                 DateRange = new DateRange(sprint.Start, sprint.Start.AddDays(sprint.Days))
             };
 
-            var project = _db.Projects.Include(p => p.Sprints).
-                FirstOrDefault(x => x.Id == projectId);
-            if (project == null)
-            {
-                return NotFound();
-            }
-            
-            project.AddSprint(sprintToAdd);
-
-            await _db.SaveChangesAsync();
-            
+            var command = new AddSprintToProjectCommand(projectId, sprintToAdd);
+            await _publisher.Publish(command);
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProjectsWithSprintsCount()
+        {
+            return Ok(await _projectQueries.GetAllWithSprints());
         }
     }
 }

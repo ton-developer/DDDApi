@@ -12,7 +12,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using ProjectBC.Api.Queries;
+using ProjectBC.Domain;
+using ProjectBC.Domain.Commands;
 using ProjectBC.Infrastructure;
+using ProjectsBC.Api.Queries;
 
 namespace ProjectsBC.Api
 {
@@ -28,11 +32,21 @@ namespace ProjectsBC.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Configure the Sql Server connection
             services.AddDbContext<ProjectsDbContext>(opt =>
             {
                 opt.UseSqlServer(Configuration.GetConnectionString("ProjectsDatabase"), b => b.MigrationsAssembly("ProjectBC.Api"));
             });
 
+            // Register the dependencies with the Infrastructure
+            services.AddTransient<IProjectRepository, ProjectRepository>();
+            
+            services.AddTransient<IPublisher, Publisher>();
+            services.AddTransient<IDomainCommandHandler, AddSprintToProjectCommandHandler>();
+            services.AddTransient<IProjectQueries, ProjectQueries>();
+            
+            
+            // Configure Swagger to show the API info in the end point /swagger
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo()
